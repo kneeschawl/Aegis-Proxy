@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  aegis-proxy:
+    build: .
+    container_name: aegis_security_proxy
+    ports:
+      - "8000:8000"
+    environment:
+      - UPSTREAM_LLM_URL=http://host.docker.internal:11434/v1/chat/completions
+      - CANARY_TOKENS=AEGIS_SECRET_CANARY
+      - REDIS_HOST=redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: aegis_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: aegis-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  redis:
+    image: redis:7-alpine
+    container_name: aegis-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  grafana_data:

@@ -1,0 +1,16 @@
+# Ignore all contents of models directory, but keep the directory structure
+models/*
+!models/.gitkeep
+
+# Ignore Python & local environment files
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Ignore local datasets, CSVs, and logs
+*.csv
+*.log
+
+# Ignore secrets
+.env
