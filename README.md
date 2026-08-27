@@ -386,4 +386,6 @@ Artifacts expected by runtime are under `models/`.
 ### 1. Start the Proxy Stack
 ```powershell
 docker-compose up -d --build
+```
+
 This project is licensed under the terms in [LICENSE](LICENSE).
